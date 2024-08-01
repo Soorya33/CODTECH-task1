@@ -1,0 +1,122 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Calculator extends JFrame implements ActionListener {
+
+    // Create a text field to display results
+    private JTextField textField;
+
+    // Variables to store operands and operator
+    private String operator = "";
+    private double num1 = 0, num2 = 0, result = 0;
+
+    public Calculator() {
+        // Create a frame
+        setTitle("Simple Calculator");
+        setLayout(null);
+        setSize(300, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Create a text field
+        textField = new JTextField();
+        textField.setBounds(30, 40, 240, 30);
+        textField.setEditable(false);
+
+        // Create number buttons and operator buttons
+        JButton[] numberButtons = new JButton[10];
+        for (int i = 0; i < 10; i++) {
+            numberButtons[i] = new JButton(String.valueOf(i));
+            numberButtons[i].setBounds(30 + (i % 3) * 60, 100 + (i / 3) * 50, 50, 40);
+            numberButtons[i].addActionListener(this);
+        }
+
+        JButton addButton = new JButton("+");
+        JButton subButton = new JButton("-");
+        JButton mulButton = new JButton("*");
+        JButton divButton = new JButton("/");
+        JButton equButton = new JButton("=");
+        JButton clrButton = new JButton("C");
+
+        addButton.setBounds(200, 100, 60, 40);
+        subButton.setBounds(200, 150, 60, 40);
+        mulButton.setBounds(200, 200, 60, 40);
+        divButton.setBounds(200, 250, 60, 40);
+        equButton.setBounds(140, 300, 60, 40);
+        clrButton.setBounds(30, 300, 60, 40);
+
+        addButton.addActionListener(this);
+        subButton.addActionListener(this);
+        mulButton.addActionListener(this);
+        divButton.addActionListener(this);
+        equButton.addActionListener(this);
+        clrButton.addActionListener(this);
+
+        // Add components to the frame
+        add(textField);
+        for (JButton button : numberButtons) {
+            add(button);
+        }
+        add(addButton);
+        add(subButton);
+        add(mulButton);
+        add(divButton);
+        add(equButton);
+        add(clrButton);
+
+        // Make the frame visible
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        if (Character.isDigit(command.charAt(0))) {
+            // If the user presses a number button
+            textField.setText(textField.getText() + command);
+        } else if (command.charAt(0) == 'C') {
+            // Clear the text field
+            textField.setText("");
+            num1 = num2 = result = 0;
+            operator = "";
+        } else if (command.charAt(0) == '=') {
+            // Perform calculation when '=' is pressed
+            num2 = Double.parseDouble(textField.getText());
+
+            switch (operator) {
+                case "+": result = num1 + num2; break;
+                case "-": result = num1 - num2; break;
+                case "*": result = num1 * num2; break;
+                case "/": result = num1 / num2; break;
+            }
+
+            textField.setText(String.valueOf(result));
+            operator = "";
+        } else {
+            // Set the operator and store the first number
+            if (!operator.isEmpty()) {
+                num2 = Double.parseDouble(textField.getText());
+                switch (operator) {
+                    case "+": result = num1 + num2; break;
+                    case "-": result = num1 - num2; break;
+                    case "*": result = num1 * num2; break;
+                    case "/": result = num1 / num2; break;
+                }
+                textField.setText(String.valueOf(result));
+                num1 = result;
+            } else {
+                num1 = Double.parseDouble(textField.getText());
+            }
+
+            operator = command;
+            textField.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        // Create the calculator application
+        new Calculator();
+    }
+}
